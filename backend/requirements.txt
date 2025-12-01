@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+motor
+python-dotenv
+python-multipart
+passlib[bcrypt]
+pyjwt
+email-validator
+secure-smtplib
+twilio
+argon2-cffi

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principal Dashboard | EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../src/js/config.js"></script>
+    <script src="../../src/js/auth.js"></script>
+    <script src="../../src/js/controllers/principalController.js" defer></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <nav class="bg-blue-900 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <span class="text-yellow-400">🏛️</span> Principal Console
+            </h1>
+            <div class="flex items-center gap-4">
+                <span id="navUserName" class="text-blue-200 text-sm">Loading...</span>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded text-sm transition">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6 space-y-8">
+
+        <div class="bg-white rounded-lg shadow-md border-t-4 border-blue-500">
+            <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+                <h2 class="text-lg font-bold text-gray-800">Pending HOD Approvals</h2>
+                <button onclick="loadPendingHODs()" class="text-blue-600 text-sm hover:underline">Refresh</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3">Staff Name</th>
+                            <th class="px-6 py-3">Department/Branch</th>
+                            <th class="px-6 py-3">Email</th>
+                            <th class="px-6 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hodTableBody">
+                        <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="bg-white rounded-lg shadow-md border-t-4 border-purple-500 p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">🎓 Annual Batch Progression</h3>
+                <p class="text-sm text-gray-600 mb-4">
+                    Automatically move all students to the next academic year (e.g., 1st Year &rarr; 2nd Year).
+                    <br><span class="text-red-500 font-semibold">Warning: This cannot be undone.</span>
+                </p>
+                <button onclick="runBatchProgression()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded transition">
+                    Run Progression Tool
+                </button>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md border-t-4 border-orange-500 p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-2">✏️ Manual Student Edit</h3>
+                <p class="text-sm text-gray-600 mb-4">Fix specific errors in a student's year or section.</p>
+                <form onsubmit="event.preventDefault(); overrideStudent()" class="flex gap-2">
+                    <input id="overrideId" type="text" placeholder="Student ID (Email)" class="flex-1 p-2 border rounded" required>
+                    <select id="newYear" class="p-2 border rounded">
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                    </select>
+                    <button class="bg-orange-500 hover:bg-orange-600 text-white px-4 rounded">Update</button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex flex-col items-center justify-center text-center p-6">
+
+    <div class="bg-white p-10 rounded-lg shadow-xl max-w-md">
+        <div class="text-6xl mb-4">🚫</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Access Denied</h1>
+        <p class="text-gray-600 mb-6">
+            You do not have permission to view this page. <br>
+            Please contact your administrator if you believe this is a mistake.
+        </p>
+        
+        <div class="space-y-3">
+            <button onclick="window.history.back()" class="w-full bg-gray-200 text-gray-800 font-bold py-2 rounded hover:bg-gray-300 transition">
+                Go Back
+            </button>
+            <a href="../index.html" class="block w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 transition">
+                Return to Login
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

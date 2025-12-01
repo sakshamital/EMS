@@ -1,0 +1,58 @@
+services:
+  # --- 1. MongoDB Database Service ---
+  mongodb:
+    image: mongo:latest
+    container_name: ems-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      # Use a named volume (managed by Docker) to avoid Windows permission errors
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=ems_db
+
+  # --- 2. Node.js Backend API Service ---
+  server:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: ems-server
+    restart: always
+    environment:
+      - NODE_ENV=development
+      # Points to the 'mongodb' service name defined above
+      - MONGO_URI=mongodb://mongodb:27017/ems_db
+      # Defaults to a dev secret if .env is missing/empty
+      - JWT_SECRET=${JWT_SECRET:-super_secret_dev_key_123}
+      - PORT=5000
+    volumes:
+      # Syncs code changes during development
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+
+  # --- 3. React Frontend Client Service ---
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: ems-client
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    # These two lines are crucial for React hot-reloading in Docker
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+
+# Define the persistent volume for the database
+volumes:
+  mongodb_data:

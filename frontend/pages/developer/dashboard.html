@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Dashboard | EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../src/js/config.js"></script>
+    <script src="../../src/js/auth.js"></script>
+    <script src="../../src/js/controllers/devController.js" defer></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <nav class="bg-gray-900 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <span class="text-blue-400">⚙️</span> System Developer
+            </h1>
+            <div class="flex items-center gap-4">
+                <span id="navUserName" class="text-gray-300 text-sm">Loading...</span>
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-1 rounded text-sm transition">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-500">
+                <h2 class="text-xl font-bold mb-4 text-gray-800">Add New College</h2>
+                <form id="createCollegeForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">College Name</label>
+                        <input type="text" id="colName" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. IIT Bombay" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">College Code</label>
+                        <input type="text" id="colCode" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. IITB01" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">District / Region</label>
+                        <input type="text" id="colDistrict" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Mumbai" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition font-semibold">
+                        Create College Module
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-orange-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Pending Principal Requests</h2>
+                    <button onclick="loadPendingPrincipals()" class="text-blue-500 hover:text-blue-700 text-sm">Refresh</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2">Name</th>
+                                <th class="px-4 py-2">Email</th>
+                                <th class="px-4 py-2">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pendingPrincipalsTable">
+                            <tr><td colspan="3" class="px-4 py-2 text-center text-gray-500">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-green-500">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-800">Active College Modules</h2>
+                    <button onclick="loadColleges()" class="text-blue-500 hover:text-blue-700 text-sm">Refresh</button>
+                </div>
+                <div class="overflow-x-auto max-h-64 overflow-y-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Code</th>
+                                <th class="px-4 py-2">College Name</th>
+                                <th class="px-4 py-2">District</th>
+                                <th class="px-4 py-2">Principal ID</th>
+                            </tr>
+                        </thead>
+                        <tbody id="collegeListTable">
+                            <tr><td colspan="4" class="px-4 py-2 text-center text-gray-500">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="approvalModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h3 class="text-lg font-bold mb-4">Approve Principal</h3>
+            <p class="mb-2 text-sm text-gray-600">Select the college to assign to this Principal:</p>
+            <select id="modalCollegeSelect" class="w-full p-2 border rounded mb-4">
+                </select>
+            <input type="hidden" id="modalPrincipalId">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Cancel</button>
+                <button onclick="confirmApproval()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Approve & Link</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

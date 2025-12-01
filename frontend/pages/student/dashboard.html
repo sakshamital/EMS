@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | EMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="../../src/js/config.js"></script>
+    <script src="../../src/js/auth.js"></script>
+    <script src="../../src/js/controllers/studentController.js" defer></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+    <nav class="bg-green-700 text-white p-4 shadow-md sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <span class="text-white">🎓</span> Student Portal
+            </h1>
+            <div class="flex items-center gap-4">
+                <a href="create-event.html" class="bg-white text-green-700 px-4 py-1 rounded text-sm font-bold hover:bg-gray-100 transition">
+                    + Create Event
+                </a>
+                <span id="navUserName" class="text-green-100 text-sm hidden md:inline">Loading...</span>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded text-sm transition">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6 space-y-8">
+
+        <div class="flex border-b border-gray-300">
+            <button onclick="switchTab('upcoming')" id="tab-upcoming" class="px-6 py-2 text-green-700 border-b-2 border-green-700 font-bold focus:outline-none">
+                Upcoming Events
+            </button>
+            <button onclick="switchTab('my-events')" id="tab-my-events" class="px-6 py-2 text-gray-500 hover:text-green-600 focus:outline-none">
+                My Registrations
+            </button>
+        </div>
+
+        <div id="upcomingEventsSection" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <p class="col-span-full text-center text-gray-500 py-10">Loading events...</p>
+        </div>
+
+        <div id="myRegistrationsSection" class="hidden">
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
+                        <tr>
+                            <th class="px-6 py-3">Event Name</th>
+                            <th class="px-6 py-3">Date</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3 text-center">Ticket</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myRegistrationsTable">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden">
+            <img id="modalPoster" src="" alt="Event Poster" class="w-full h-48 object-cover bg-gray-200">
+            <div class="p-6">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-2xl text-gray-800" id="modalTitle">Event Title</h3>
+                    <span id="modalFee" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded font-bold">FREE</span>
+                </div>
+                <p class="text-sm text-gray-500 mt-1 mb-4" id="modalDate">Date & Time</p>
+                
+                <div class="prose text-sm text-gray-600 mb-6 max-h-32 overflow-y-auto" id="modalDesc">
+                    Description goes here...
+                </div>
+
+                <div class="flex justify-end gap-3">
+                    <button onclick="closeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded">Close</button>
+                    <button id="registerBtn" onclick="registerForEvent()" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 shadow-md font-medium">
+                        Register Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

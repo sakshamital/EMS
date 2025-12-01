@@ -1,0 +1,19 @@
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables (CRITICAL: Do not commit these!)
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE Settings (Optional)
+.vscode/
+.idea/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
