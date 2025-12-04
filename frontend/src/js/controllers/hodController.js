@@ -154,3 +154,73 @@ function openCreateModal() {
     window.location.href = '../student/create-event.html'; // Reuse the form
     // Note: The form needs logic to detect if user is HOD and call the ADMIN API.
 }
+async function promoteBatch() {
+    const year = document.getElementById('promoteYear').value;
+    const sem = document.getElementById('promoteSem').value;
+
+    const confirmMsg = `Are you sure you want to promote ALL students in:\n\n${year} - ${sem}?\n\nThis will move them to the next semester/year automatically.`;
+    
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        const res = await fetch(`${API_URL.ADMIN}/promote-batch`, {
+            method: 'POST',
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${getToken()}` 
+            },
+            body: JSON.stringify({ target_year: year, target_sem: sem })
+        });
+
+        const data = await res.json();
+        
+        if (res.ok) {
+            alert(data.message + `\nMoved to: ${data.to}`);
+            // Optionally refresh stats or lists
+        } else {
+            alert("Error: " + data.detail);
+        }
+    } catch (err) {
+        alert("Server Error");
+    }
+}
+// Add this to your DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () => {
+    // ... existing loaders
+    loadActiveStudents(); // <--- Add this
+});
+
+// --- 5. Load Active Students ---
+async function loadActiveStudents() {
+    const tbody = document.getElementById('activeStudentsTable');
+    try {
+        const res = await fetch(`${API_URL.ADMIN}/students/active`, {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        });
+        
+        const students = await res.json();
+
+        if (students.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-400">No active students found in your batch.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = students.map(s => `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-3 font-bold text-gray-700">${s.college_id_number || 'N/A'}</td>
+                <td class="px-6 py-3">
+                    <div class="font-medium text-gray-900">${s.name}</div>
+                    <div class="text-xs text-gray-500">${s.email}</div>
+                </td>
+                <td class="px-6 py-3">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${s.year}</span>
+                    <span class="text-gray-500 text-xs ml-1">${s.section ? 'Sec ' + s.section : ''}</span>
+                </td>
+                <td class="px-6 py-3 text-gray-500">${s.phone}</td>
+            </tr>
+        `).join('');
+
+    } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-red-500 py-4">Error loading data</td></tr>`;
+    }
+}

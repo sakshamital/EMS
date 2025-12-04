@@ -11,8 +11,9 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# --- CORS (Allow Frontend Connection) ---
-origins = ["*"] # Allow all for development
+# --- CORS Configuration ---
+# Allow all origins for development testing
+origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,7 +30,7 @@ app.include_router(principal.router, prefix="/api/principal", tags=["Principal"]
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 app.include_router(student.router, prefix="/api/student", tags=["Student"])
 
-# --- ROOT ROUTE (Fixes the "Not Found" on Homepage) ---
+# --- ROOT ROUTE ---
 @app.get("/")
 def read_root():
     return {
@@ -37,3 +38,8 @@ def read_root():
         "message": "EMS Backend is Running!", 
         "docs_url": "http://127.0.0.1:8000/docs"
     }
+# ... existing imports ...
+from app.routers import auth, developer, principal, admin, student, teacher # <-- Import teacher
+
+# ... inside app ...
+app.include_router(teacher.router, prefix="/api/teacher", tags=["Teacher"]) # <-- Include it

@@ -1,39 +1,34 @@
+from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Any, Union
 from jose import jwt
-from passlib.context import CryptContext
 from app.core.config import settings
 
-# Setup password hashing using Bcrypt
+# CRITICAL FIX: Use 'argon2' instead of 'bcrypt' to avoid the 72-byte error
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verifies if a plain text password matches the hashed password from the database.
+    Verifies if a plain text password matches the hashed password.
     """
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_password_hash(password: str) -> str:
     """
-    Takes a plain text password and returns a secure hash.
+    Returns a secure hash of the password using Argon2.
     """
     return pwd_context.hash(password)
 
-def create_access_token(subject: Union[str, Any], role: str, expires_delta: timedelta = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     """
-    Creates a JWT token containing the user's email (subject) and role.
+    Creates a JWT token containing user data.
     """
+    to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    # The payload stores data inside the token
-    to_encode = {
-        "exp": expire, 
-        "sub": str(subject),
-        "role": role
-    }
-    
+    to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

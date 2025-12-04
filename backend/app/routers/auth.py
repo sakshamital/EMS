@@ -9,7 +9,8 @@ from datetime import datetime, timedelta
 router = APIRouter()
 
 # --- Security Configuration ---
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use argon2 instead of bcrypt to fix the 72-byte error
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def get_password_hash(password):
     return pwd_context.hash(password)

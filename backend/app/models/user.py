@@ -10,10 +10,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
-    college_code: Optional[str] = None # Required for non-Developers
-    branch: Optional[str] = None       # Required for HOD/Student
-    year: Optional[str] = None         # Required for Student
-    section: Optional[str] = None      # Required for Student
+    college_code: Optional[str] = None 
+    college_name: Optional[str] = None # Added College Name
+    college_id_number: Optional[str] = None # Added Student/Staff ID (Roll No)
+    branch: Optional[str] = None
+    year: Optional[str] = None
+    section: Optional[str] = None
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -23,6 +25,7 @@ class UserInDB(UserBase):
     id: str = Field(alias="_id")
     approval_status: str = "Pending"
     college_id: Optional[str] = None
+    college_id_number: Optional[str] = None # Show in DB response
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True

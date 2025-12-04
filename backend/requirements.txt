@@ -3,9 +3,10 @@ uvicorn
 motor
 python-dotenv
 python-multipart
-passlib[bcrypt]
+passlib[argon2]
 pyjwt
 email-validator
 secure-smtplib
 twilio
 argon2-cffi
+motor

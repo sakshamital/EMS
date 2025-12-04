@@ -68,7 +68,61 @@ async function handleCreateCollege(e) {
         if (res.ok) {
             alert('College Created Successfully!');
             document.getElementById('createCollegeForm').reset();
-            loadColleges(); 
+           // --- 1. Load Colleges (Updated) ---
+async function loadColleges() {
+    const tableBody = document.getElementById('collegeListTable');
+    try {
+        const res = await fetch(`${API_URL.DEVELOPER}/colleges`, {
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        });
+        const colleges = await res.json();
+
+        if (!res.ok) throw new Error(colleges.detail || "Failed to load");
+
+        tableBody.innerHTML = colleges.map(col => `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-4 py-2 font-medium text-gray-900">${col.code}</td>
+                <td class="px-4 py-2">${col.name}</td>
+                <td class="px-4 py-2">${col.district}</td>
+                <td class="px-4 py-2 text-xs text-gray-500">${col.principal_id || '<span class="text-red-500">Unassigned</span>'}</td>
+                <td class="px-4 py-2 text-center">
+                    <button onclick="deleteCollege('${col._id}')" class="bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded text-xs font-bold transition">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+        
+        populateModalDropdown(colleges);
+
+    } catch (err) {
+        console.error(err);
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-red-500 py-2">Error loading data</td></tr>`;
+    }
+}
+
+// --- 5. Delete College (New Function) ---
+async function deleteCollege(id) {
+    if (!confirm("Are you sure you want to delete this college? This cannot be undone.")) return;
+
+    try {
+        const res = await fetch(`${API_URL.DEVELOPER}/college/${id}`, {
+            method: 'DELETE',
+            headers: { "Authorization": `Bearer ${getToken()}` }
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+            alert("College Deleted Successfully");
+            loadColleges(); // Refresh the list
+        } else {
+            alert("Error: " + result.detail);
+        }
+    } catch (err) {
+        alert("Server Error");
+    }
+}
         } else {
             alert('Error: ' + result.detail);
         }

@@ -8,10 +8,10 @@
     <script src="../src/js/config.js"></script>
     <script src="../src/js/auth.js"></script>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+<body class="bg-gray-100 min-h-screen flex items-center justify-center py-10">
 
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <div class="text-center mb-8">
+        <div class="text-center mb-6">
             <h1 class="text-3xl font-bold text-blue-600">Create Account</h1>
             <p class="text-gray-500 text-sm">Join the Event Management System</p>
         </div>
@@ -42,19 +42,28 @@
                 <label class="block text-sm font-medium text-gray-700">I am a...</label>
                 <select id="role" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" onchange="toggleExtraFields()">
                     <option value="Student">Student</option>
-                    <option value="HOD">HOD (Head of Dept)</option>
+                    <option value="Teacher">Class Teacher</option> <option value="HOD">HOD (Head of Dept)</option>
                     <option value="Principal">Principal</option>
-                    <option value="Developer">System Developer</option>
                 </select>
             </div>
 
-            <div id="collegeCodeField" class="hidden">
-                <label class="block text-sm font-medium text-gray-700">College Code</label>
-                <input type="text" id="collegeCode" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter College Code">
-                <p class="text-xs text-gray-500 mt-1">Ask your administrator for this code.</p>
+            <div id="collegeSection" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">College Code</label>
+                    <input type="text" id="collegeCode" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Enter Code (e.g. 1234)" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">College Name</label>
+                    <input type="text" id="collegeName" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. IIT Delhi" required>
+                </div>
             </div>
 
-            <div id="studentFields" class="hidden space-y-4">
+            <div id="idField">
+                <label class="block text-sm font-medium text-gray-700" id="idLabel">Student ID (Roll No)</label>
+                <input type="text" id="collegeIdNumber" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. 2023CS01">
+            </div>
+
+            <div id="studentFields" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Branch</label>
                     <input type="text" id="branch" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. CSE, MECH">
@@ -63,6 +72,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Year</label>
                         <select id="year" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">Select...</option>
                             <option value="1st Year">1st Year</option>
                             <option value="2nd Year">2nd Year</option>
                             <option value="3rd Year">3rd Year</option>
@@ -87,26 +97,26 @@
     </div>
 
     <script>
-        // Toggle fields based on role
+        // --- YOUR UPDATED FUNCTION IS HERE ---
         function toggleExtraFields() {
             const role = document.getElementById('role').value;
-            const collegeField = document.getElementById('collegeCodeField');
             const studentFields = document.getElementById('studentFields');
+            const idLabel = document.getElementById('idLabel');
 
-            if (role === 'Developer') {
-                collegeField.classList.add('hidden');
-            } else {
-                collegeField.classList.remove('hidden');
-            }
-
-            if (role === 'Student' || role === 'HOD') {
+            // Teachers need Branch/Year/Section just like Students
+            if (role === 'Student' || role === 'Teacher') {
                 studentFields.classList.remove('hidden');
+                idLabel.innerText = role === 'Student' ? "Student ID (Roll No)" : "Employee ID";
+            } else if (role === 'HOD') {
+                studentFields.classList.remove('hidden');
+                idLabel.innerText = "Staff ID";
             } else {
+                // Principal
                 studentFields.classList.add('hidden');
+                idLabel.innerText = "Employee ID";
             }
         }
 
-        // Handle Signup
         document.getElementById('signupForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -116,19 +126,15 @@
                 phone: document.getElementById('phone').value,
                 password: document.getElementById('password').value,
                 role: document.getElementById('role').value,
-                college_code: document.getElementById('collegeCode').value || null,
+                college_code: document.getElementById('collegeCode').value,
+                college_name: document.getElementById('collegeName').value,
+                college_id_number: document.getElementById('collegeIdNumber').value,
                 branch: document.getElementById('branch').value || null,
                 year: document.getElementById('year').value || null,
                 section: document.getElementById('section').value || null
             };
 
-            if (userData.role !== 'Developer' && !userData.college_code) {
-                alert("College Code is required for this role.");
-                return;
-            }
-
             try {
-                // FIX: Use API_URL.AUTH instead of just API_URL
                 const res = await fetch(`${API_URL.AUTH}/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -149,6 +155,7 @@
             }
         });
 
+        // Initialize view
         toggleExtraFields();
     </script>
 

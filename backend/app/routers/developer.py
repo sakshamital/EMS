@@ -95,3 +95,23 @@ async def get_pending_principals():
         user["_id"] = str(user["_id"])
         
     return users
+@router.delete("/college/{college_id}")
+async def delete_college(college_id: str):
+    try:
+        # Validate ID
+        if not ObjectId.is_valid(college_id):
+            raise HTTPException(status_code=400, detail="Invalid College ID")
+
+        # Delete the college
+        result = await db["colleges"].delete_one({"_id": ObjectId(college_id)})
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="College not found")
+            
+        # Optional: Delete users associated with this college?
+        # For now, we just remove the college module itself.
+        
+        return {"message": "College deleted successfully"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
