@@ -1,6 +1,7 @@
 // Configuration Settings
 // Ensure this matches your backend terminal output EXACTLY
-const API_BASE_URL = "http://127.0.0.1:8000/api"; 
+// const API_BASE_URL = "http://127.0.0.1:8000/api";  <-- OLD (Local)
+const API_BASE_URL = "https://ems-backend.onrender.com/api"; // <-- NEW (Live) 
 
 const API_URL = {
     AUTH: `${API_BASE_URL}/auth`,
