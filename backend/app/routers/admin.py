@@ -151,3 +151,49 @@ async def get_active_students(hod: dict = Depends(get_current_user)):
         s["_id"] = str(s["_id"])
         
     return students
+from fastapi import APIRouter, HTTPException, Depends
+from bson import ObjectId
+from typing import List
+from app.db.database import db
+from app.models.user import UserInDB # Assumed to be complete
+# ... existing imports ...
+
+# ... existing routes ...
+
+# --- TEACHER LOGIN MANAGEMENT ---
+
+@router.get("/teachers/pending", response_model=List[UserInDB])
+async def get_pending_teachers(hod: dict = Depends(get_current_user)):
+    # Logic: Only show teachers applying for the HOD's own jurisdiction (college and branch)
+    query = {
+        "role": "Teacher",
+        "approval_status": "Pending",
+        "college_id": hod["college_id"],
+        "branch": hod["branch"]
+    }
+    
+    # If the HOD manages a specific year, filter teachers assigned to that year as well
+    if hod.get("year"):
+        query["year"] = hod["year"]
+        
+    teachers = await db["users"].find(query).to_list(100)
+    for t in teachers:
+        t["_id"] = str(t["_id"])
+    return teachers
+
+@router.patch("/teachers/approve/{user_id}")
+async def approve_teacher(user_id: str, hod: dict = Depends(get_current_user)):
+    if not ObjectId.is_valid(user_id):
+        raise HTTPException(status_code=400, detail="Invalid ID")
+
+    # CRITICAL SECURITY STEP: Filter by the HOD's own college and branch before updating
+    result = await db["users"].update_one(
+        {"_id": ObjectId(user_id), "role": "Teacher", "approval_status": "Pending", 
+         "college_id": hod["college_id"], "branch": hod["branch"]},
+        {"$set": {"approval_status": "Approved"}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Teacher not found in your branch or already approved")
+        
+    return {"message": "Teacher Approved Successfully"}
