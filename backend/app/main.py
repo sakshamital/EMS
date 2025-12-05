@@ -10,22 +10,31 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# --- CORS Configuration (CRITICAL for Frontend) ---
+# ... existing imports ...
+
+app = FastAPI(
+    title="EMS API",
+    # ...
+)
+
+# --- CORS Configuration ---
 origins = [
-    "http://127.0.0.1:5500",
     "http://localhost:5500",
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "*"
+    "http://127.0.0.1:5500",
+    "https://ems-seven-ruby.vercel.app",  # <--- ADD YOUR VERCEL DOMAIN HERE
+    "https://ems-1oigkwkq7-sakshams-projects-122dde0a.vercel.app", # <--- ADD THIS ONE TOO (from your screenshot)
+    "*"  # Keep this as a fallback for now
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins, # Use the list we just made
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ... rest of file ...
 
 # 2. INCLUDE THE ROUTERS (This is what was missing!)
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
