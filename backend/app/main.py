@@ -13,7 +13,16 @@ app = FastAPI(
 
 # --- CORS Configuration ---
 # Allow all origins for development testing
-origins = ["*"]
+# ... inside main.py ...
+
+# --- CORS Configuration (THE FIX) ---
+origins = [
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1:5500",  # <--- CRUCIAL: Allow the Live Server port
+    "http://localhost:5500",
+    "*"                       # Fallback to allow all others
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,7 +31,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+# ... rest of the file ...
 # --- CONNECT ROUTERS ---
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(developer.router, prefix="/api/developer", tags=["Developer"])
