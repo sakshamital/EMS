@@ -2,7 +2,7 @@
 // Ensure this matches your backend terminal output EXACTLY
 // const API_BASE_URL = "http://127.0.0.1:8000/api";  <-- OLD (Local)
 // Use the reliable local IP address and port 8000
-const API_BASE_URL = "http://127.0.0.1:8000/api"; 
+const API_BASE_URL = "http://127.0.0.1:8000/api";
 
 const API_URL = {
     AUTH: `${API_BASE_URL}/auth`,
