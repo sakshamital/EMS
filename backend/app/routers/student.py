@@ -3,9 +3,25 @@ from typing import List
 from app.db.database import db
 from app.models.event import EventCreate, EventInDB
 from app.core.config import settings
-from jose import jwt, JWTError
 from bson import ObjectId
 from datetime import datetime
+# ... other imports ...
+import jwt
+from fastapi import HTTPException, status, Header
+
+# ... inside get_current_user function ...
+async def get_current_user(authorization: str = Header(...)):
+    try:
+        token = authorization.split(" ")[1]
+        # PyJWT decode
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+    except jwt.PyJWTError: # <--- CHANGED Exception type
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # ... rest of function ...
 
 router = APIRouter()
 
@@ -17,7 +33,7 @@ async def get_current_user(authorization: str = Header(...)):
         email: str = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-    except JWTError:
+    except (jwt.InvalidTokenError, jwt.DecodeError, jwt.ExpiredSignatureError):
         raise HTTPException(status_code=401, detail="Invalid token")
     
     user = await db["users"].find_one({"email": email})

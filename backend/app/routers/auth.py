@@ -3,7 +3,9 @@ from app.db.database import db
 from app.models.user import UserCreate, UserLogin
 from app.core.config import settings
 from passlib.context import CryptContext
-from jose import jwt
+# ... other imports ...
+import jwt # <--- CHANGED from 'from jose import jwt'
+# ... rest of file is fine ...
 from datetime import datetime, timedelta
 
 router = APIRouter()
