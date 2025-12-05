@@ -4,7 +4,7 @@ motor
 python-dotenv
 python-multipart
 passlib[argon2]
-pyjwt
+python-jose
 email-validator
 secure-smtplib
 twilio
