@@ -43,3 +43,6 @@ from app.routers import auth, developer, principal, admin, student, teacher # <-
 
 # ... inside app ...
 app.include_router(teacher.router, prefix="/api/teacher", tags=["Teacher"]) # <-- Include it
+from fastapi import FastAPI
+
+app = FastAPI()
